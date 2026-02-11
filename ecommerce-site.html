@@ -1,0 +1,1235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EMBER — Artisan Ceramics</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600;700&family=Work+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --clay: #2d2520;
+            --terracotta: #c8553d;
+            --sand: #f4f1de;
+            --cream: #faf8f3;
+            --earth: #8b7355;
+            --charcoal: #1a1614;
+            --glaze: #e8dcc4;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Work Sans', sans-serif;
+            background: var(--cream);
+            color: var(--clay);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(250, 248, 243, 0.95);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            border-bottom: 1px solid var(--glaze);
+        }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 1.5rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 2rem;
+            font-weight: 300;
+            letter-spacing: 0.3em;
+            color: var(--clay);
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .logo:hover {
+            color: var(--terracotta);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 3rem;
+            list-style: none;
+            align-items: center;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--clay);
+            font-size: 0.9rem;
+            font-weight: 400;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            transition: color 0.3s;
+            position: relative;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 1px;
+            background: var(--terracotta);
+            transition: width 0.3s;
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        .cart-icon {
+            position: relative;
+            cursor: pointer;
+            font-size: 1.2rem;
+        }
+
+        .cart-count {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: var(--terracotta);
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            font-weight: 500;
+        }
+
+        /* Pages */
+        .page {
+            display: none;
+            min-height: 100vh;
+            padding-top: 100px;
+        }
+
+        .page.active {
+            display: block;
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Home Page */
+        .hero {
+            height: 85vh;
+            background: linear-gradient(135deg, var(--sand) 0%, var(--glaze) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(200, 85, 61, 0.1) 0%, transparent 70%);
+            border-radius: 50%;
+            top: -200px;
+            right: -200px;
+            animation: float 20s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            50% { transform: translate(-50px, 50px) rotate(180deg); }
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+            max-width: 800px;
+            padding: 2rem;
+        }
+
+        .hero h1 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 5rem;
+            font-weight: 300;
+            margin-bottom: 1.5rem;
+            letter-spacing: 0.05em;
+            line-height: 1.2;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            color: var(--earth);
+            margin-bottom: 2.5rem;
+            font-weight: 300;
+        }
+
+        .cta-button {
+            display: inline-block;
+            padding: 1rem 3rem;
+            background: var(--terracotta);
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+            transition: all 0.3s;
+            border: 2px solid var(--terracotta);
+        }
+
+        .cta-button:hover {
+            background: transparent;
+            color: var(--terracotta);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(200, 85, 61, 0.2);
+        }
+
+        /* Shop Page */
+        .shop-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 4rem 2rem;
+        }
+
+        .shop-header {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+
+        .shop-header h2 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 3.5rem;
+            font-weight: 300;
+            margin-bottom: 1rem;
+        }
+
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 3rem;
+        }
+
+        .product-card {
+            background: white;
+            border: 1px solid var(--glaze);
+            transition: all 0.4s;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .product-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 60px rgba(45, 37, 32, 0.15);
+        }
+
+        .product-image {
+            width: 100%;
+            height: 350px;
+            background: var(--sand);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 4rem;
+            color: var(--earth);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .product-image::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, transparent 0%, rgba(200, 85, 61, 0.1) 100%);
+        }
+
+        .product-info {
+            padding: 1.5rem;
+        }
+
+        .product-name {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.5rem;
+            font-weight: 400;
+            margin-bottom: 0.5rem;
+        }
+
+        .product-description {
+            font-size: 0.9rem;
+            color: var(--earth);
+            margin-bottom: 1rem;
+            line-height: 1.6;
+        }
+
+        .product-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .product-price {
+            font-size: 1.3rem;
+            font-weight: 500;
+            color: var(--terracotta);
+        }
+
+        .add-to-cart {
+            padding: 0.6rem 1.5rem;
+            background: var(--clay);
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 0.85rem;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            transition: all 0.3s;
+            font-family: 'Work Sans', sans-serif;
+        }
+
+        .add-to-cart:hover {
+            background: var(--terracotta);
+            transform: scale(1.05);
+        }
+
+        /* Product Detail Page */
+        .product-detail {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 4rem 2rem;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+        }
+
+        .detail-image {
+            background: var(--sand);
+            height: 600px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 8rem;
+            color: var(--earth);
+            border: 1px solid var(--glaze);
+        }
+
+        .detail-info h2 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 3rem;
+            font-weight: 400;
+            margin-bottom: 1rem;
+        }
+
+        .detail-price {
+            font-size: 2rem;
+            color: var(--terracotta);
+            margin-bottom: 2rem;
+            font-weight: 500;
+        }
+
+        .detail-description {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            color: var(--earth);
+            margin-bottom: 2rem;
+        }
+
+        .quantity-selector {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .quantity-selector button {
+            width: 40px;
+            height: 40px;
+            border: 1px solid var(--clay);
+            background: white;
+            cursor: pointer;
+            font-size: 1.2rem;
+            transition: all 0.3s;
+        }
+
+        .quantity-selector button:hover {
+            background: var(--clay);
+            color: white;
+        }
+
+        .quantity-selector span {
+            font-size: 1.3rem;
+            min-width: 40px;
+            text-align: center;
+        }
+
+        .detail-add-to-cart {
+            width: 100%;
+            padding: 1.2rem;
+            background: var(--terracotta);
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+
+        .detail-add-to-cart:hover {
+            background: var(--clay);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(45, 37, 32, 0.2);
+        }
+
+        /* Cart Page */
+        .cart-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 4rem 2rem;
+        }
+
+        .cart-header {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 3rem;
+            font-weight: 300;
+            margin-bottom: 3rem;
+            text-align: center;
+        }
+
+        .cart-items {
+            background: white;
+            border: 1px solid var(--glaze);
+            margin-bottom: 2rem;
+        }
+
+        .cart-item {
+            display: grid;
+            grid-template-columns: 100px 1fr auto auto;
+            gap: 2rem;
+            padding: 2rem;
+            border-bottom: 1px solid var(--glaze);
+            align-items: center;
+        }
+
+        .cart-item:last-child {
+            border-bottom: none;
+        }
+
+        .cart-item-image {
+            width: 100px;
+            height: 100px;
+            background: var(--sand);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            color: var(--earth);
+        }
+
+        .cart-item-info h3 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .cart-item-quantity {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .cart-item-quantity button {
+            width: 30px;
+            height: 30px;
+            border: 1px solid var(--clay);
+            background: white;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .cart-item-quantity button:hover {
+            background: var(--clay);
+            color: white;
+        }
+
+        .cart-item-price {
+            font-size: 1.3rem;
+            font-weight: 500;
+            color: var(--terracotta);
+            min-width: 100px;
+            text-align: right;
+        }
+
+        .cart-summary {
+            background: var(--sand);
+            padding: 2rem;
+            border: 1px solid var(--glaze);
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+        }
+
+        .summary-total {
+            display: flex;
+            justify-content: space-between;
+            padding-top: 1rem;
+            border-top: 2px solid var(--earth);
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 2rem;
+        }
+
+        .checkout-button {
+            width: 100%;
+            padding: 1.2rem;
+            background: var(--terracotta);
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+
+        .checkout-button:hover {
+            background: var(--clay);
+            transform: translateY(-2px);
+        }
+
+        .empty-cart {
+            text-align: center;
+            padding: 4rem 2rem;
+        }
+
+        .empty-cart h3 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            color: var(--earth);
+        }
+
+        /* Checkout Page */
+        .checkout-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 4rem 2rem;
+            display: grid;
+            grid-template-columns: 1.5fr 1fr;
+            gap: 4rem;
+        }
+
+        .checkout-form {
+            background: white;
+            padding: 3rem;
+            border: 1px solid var(--glaze);
+        }
+
+        .checkout-form h3 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 0.9rem;
+            border: 1px solid var(--glaze);
+            background: var(--cream);
+            font-family: 'Work Sans', sans-serif;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--terracotta);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .order-summary {
+            background: var(--sand);
+            padding: 2rem;
+            border: 1px solid var(--glaze);
+            height: fit-content;
+        }
+
+        .order-summary h3 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .order-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--glaze);
+        }
+
+        .place-order {
+            width: 100%;
+            padding: 1.2rem;
+            background: var(--terracotta);
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            transition: all 0.3s;
+            font-weight: 500;
+            margin-top: 2rem;
+        }
+
+        .place-order:hover {
+            background: var(--clay);
+        }
+
+        /* Confirmation Page */
+        .confirmation-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 6rem 2rem;
+            text-align: center;
+        }
+
+        .confirmation-icon {
+            font-size: 5rem;
+            color: var(--terracotta);
+            margin-bottom: 2rem;
+        }
+
+        .confirmation-container h2 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .confirmation-container p {
+            font-size: 1.2rem;
+            color: var(--earth);
+            margin-bottom: 3rem;
+        }
+
+        .order-number {
+            background: var(--sand);
+            padding: 2rem;
+            margin-bottom: 3rem;
+            border: 1px solid var(--glaze);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav-links {
+                gap: 1.5rem;
+            }
+
+            .hero h1 {
+                font-size: 3rem;
+            }
+
+            .products-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .product-detail {
+                grid-template-columns: 1fr;
+            }
+
+            .checkout-container {
+                grid-template-columns: 1fr;
+            }
+
+            .cart-item {
+                grid-template-columns: 80px 1fr;
+                gap: 1rem;
+            }
+
+            .cart-item-quantity,
+            .cart-item-price {
+                grid-column: 2;
+            }
+        }
+
+        /* Toast Notification */
+        .toast {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: var(--clay);
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: 4px;
+            display: none;
+            animation: slideUp 0.3s ease-out;
+            z-index: 2000;
+        }
+
+        .toast.show {
+            display: block;
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(100px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav>
+        <div class="nav-container">
+            <a href="#" class="logo" onclick="showPage('home')">EMBER</a>
+            <ul class="nav-links">
+                <li><a href="#" onclick="showPage('home')">Home</a></li>
+                <li><a href="#" onclick="showPage('shop')">Shop</a></li>
+                <li><a href="#" onclick="showPage('about')">About</a></li>
+                <li>
+                    <div class="cart-icon" onclick="showPage('cart')">
+                        🛒
+                        <span class="cart-count" id="cartCount">0</span>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Home Page -->
+    <div id="home" class="page active">
+        <div class="hero">
+            <div class="hero-content">
+                <h1>Handcrafted<br>for Your Home</h1>
+                <p>Artisan ceramics made with care, fired with passion</p>
+                <a href="#" class="cta-button" onclick="showPage('shop')">Explore Collection</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Shop Page -->
+    <div id="shop" class="page">
+        <div class="shop-container">
+            <div class="shop-header">
+                <h2>Our Collection</h2>
+                <p>Each piece is unique, handmade with intention</p>
+            </div>
+            <div class="products-grid" id="productsGrid"></div>
+        </div>
+    </div>
+
+    <!-- Product Detail Page -->
+    <div id="productDetail" class="page">
+        <div class="product-detail" id="productDetailContent"></div>
+    </div>
+
+    <!-- About Page -->
+    <div id="about" class="page">
+        <div class="shop-container">
+            <div class="shop-header">
+                <h2>Our Story</h2>
+            </div>
+            <div style="max-width: 800px; margin: 0 auto; font-size: 1.1rem; line-height: 1.8; color: var(--earth);">
+                <p style="margin-bottom: 2rem;">
+                    EMBER was born from a passion for creating functional art that brings warmth to everyday moments. 
+                    Each piece is thoughtfully crafted by hand, shaped from premium clay, and fired in our studio kiln.
+                </p>
+                <p style="margin-bottom: 2rem;">
+                    We believe in slow creation, where every curve, texture, and glaze is considered with intention. 
+                    Our ceramics are designed to be used, loved, and passed down—beautiful objects that tell stories.
+                </p>
+                <p>
+                    Thank you for supporting handmade craftsmanship.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cart Page -->
+    <div id="cart" class="page">
+        <div class="cart-container">
+            <h2 class="cart-header">Your Cart</h2>
+            <div id="cartContent"></div>
+        </div>
+    </div>
+
+    <!-- Checkout Page -->
+    <div id="checkout" class="page">
+        <div class="checkout-container">
+            <div class="checkout-form">
+                <h3>Shipping Information</h3>
+                <form id="checkoutForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>First Name</label>
+                            <input type="text" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Last Name</label>
+                            <input type="text" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Email</label>
+                        <input type="email" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Address</label>
+                        <input type="text" required>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>City</label>
+                            <input type="text" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Postal Code</label>
+                            <input type="text" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Country</label>
+                        <select required>
+                            <option value="">Select Country</option>
+                            <option value="US">United States</option>
+                            <option value="CA">Canada</option>
+                            <option value="UK">United Kingdom</option>
+                            <option value="AU">Australia</option>
+                        </select>
+                    </div>
+
+                    <h3 style="margin-top: 3rem; margin-bottom: 2rem;">Payment Information</h3>
+                    <div class="form-group">
+                        <label>Card Number</label>
+                        <input type="text" placeholder="1234 5678 9012 3456" required>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Expiry Date</label>
+                            <input type="text" placeholder="MM/YY" required>
+                        </div>
+                        <div class="form-group">
+                            <label>CVV</label>
+                            <input type="text" placeholder="123" required>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <div class="order-summary">
+                <h3>Order Summary</h3>
+                <div id="checkoutSummary"></div>
+                <button class="place-order" onclick="placeOrder()">Place Order</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Confirmation Page -->
+    <div id="confirmation" class="page">
+        <div class="confirmation-container">
+            <div class="confirmation-icon">✓</div>
+            <h2>Order Confirmed!</h2>
+            <p>Thank you for your purchase. We'll send you a confirmation email shortly.</p>
+            <div class="order-number">
+                <strong>Order Number:</strong> <span id="orderNumber"></span>
+            </div>
+            <a href="#" class="cta-button" onclick="showPage('home')">Continue Shopping</a>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div class="toast" id="toast"></div>
+
+    <script>
+        // Product Data
+        const products = [
+            {
+                id: 1,
+                name: "Minimalist Bowl",
+                price: 48,
+                description: "A simple, elegant bowl perfect for your morning ritual",
+                icon: "🥣"
+            },
+            {
+                id: 2,
+                name: "Artisan Mug",
+                price: 32,
+                description: "Hand-thrown mug with a smooth glaze finish",
+                icon: "☕"
+            },
+            {
+                id: 3,
+                name: "Serving Platter",
+                price: 78,
+                description: "Large serving piece for gatherings and celebrations",
+                icon: "🍽️"
+            },
+            {
+                id: 4,
+                name: "Vase Collection",
+                price: 65,
+                description: "Bring nature indoors with this elegant vase",
+                icon: "🏺"
+            },
+            {
+                id: 5,
+                name: "Tea Set",
+                price: 120,
+                description: "Complete set including teapot and four cups",
+                icon: "🫖"
+            },
+            {
+                id: 6,
+                name: "Dinner Plates",
+                price: 95,
+                description: "Set of four handcrafted dinner plates",
+                icon: "🍽️"
+            },
+            {
+                id: 7,
+                name: "Sake Set",
+                price: 68,
+                description: "Traditional sake bottle with four cups",
+                icon: "🍶"
+            },
+            {
+                id: 8,
+                name: "Fruit Bowl",
+                price: 55,
+                description: "Wide bowl perfect for displaying fresh fruit",
+                icon: "🥗"
+            }
+        ];
+
+        // Cart
+        let cart = JSON.parse(localStorage.getItem('emberCart')) || [];
+
+        // Initialize
+        function init() {
+            renderProducts();
+            updateCartCount();
+        }
+
+        // Render Products
+        function renderProducts() {
+            const grid = document.getElementById('productsGrid');
+            grid.innerHTML = products.map(product => `
+                <div class="product-card" onclick="showProductDetail(${product.id})">
+                    <div class="product-image">${product.icon}</div>
+                    <div class="product-info">
+                        <h3 class="product-name">${product.name}</h3>
+                        <p class="product-description">${product.description}</p>
+                        <div class="product-footer">
+                            <span class="product-price">$${product.price}</span>
+                            <button class="add-to-cart" onclick="addToCart(event, ${product.id})">
+                                Add to Cart
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Show Product Detail
+        function showProductDetail(productId) {
+            const product = products.find(p => p.id === productId);
+            const content = document.getElementById('productDetailContent');
+            
+            content.innerHTML = `
+                <div class="detail-image">${product.icon}</div>
+                <div class="detail-info">
+                    <h2>${product.name}</h2>
+                    <div class="detail-price">$${product.price}</div>
+                    <p class="detail-description">
+                        ${product.description}
+                        <br><br>
+                        Each piece is individually crafted, making every item unique. 
+                        Minor variations in color and texture are part of the artisan process.
+                        <br><br>
+                        Care: Hand wash recommended. Microwave and dishwasher safe.
+                    </p>
+                    <div class="quantity-selector">
+                        <button onclick="updateQuantity(-1)">−</button>
+                        <span id="detailQuantity">1</span>
+                        <button onclick="updateQuantity(1)">+</button>
+                    </div>
+                    <button class="detail-add-to-cart" onclick="addToCartFromDetail(${product.id})">
+                        Add to Cart
+                    </button>
+                </div>
+            `;
+            
+            showPage('productDetail');
+        }
+
+        // Update Quantity on Detail Page
+        let detailQuantity = 1;
+        function updateQuantity(change) {
+            detailQuantity = Math.max(1, detailQuantity + change);
+            document.getElementById('detailQuantity').textContent = detailQuantity;
+        }
+
+        // Add to Cart
+        function addToCart(event, productId) {
+            event.stopPropagation();
+            const product = products.find(p => p.id === productId);
+            
+            const existingItem = cart.find(item => item.id === productId);
+            if (existingItem) {
+                existingItem.quantity += 1;
+            } else {
+                cart.push({ ...product, quantity: 1 });
+            }
+            
+            saveCart();
+            showToast(`${product.name} added to cart!`);
+        }
+
+        // Add to Cart from Detail Page
+        function addToCartFromDetail(productId) {
+            const product = products.find(p => p.id === productId);
+            
+            const existingItem = cart.find(item => item.id === productId);
+            if (existingItem) {
+                existingItem.quantity += detailQuantity;
+            } else {
+                cart.push({ ...product, quantity: detailQuantity });
+            }
+            
+            saveCart();
+            showToast(`${product.name} (×${detailQuantity}) added to cart!`);
+            detailQuantity = 1;
+        }
+
+        // Save Cart
+        function saveCart() {
+            localStorage.setItem('emberCart', JSON.stringify(cart));
+            updateCartCount();
+        }
+
+        // Update Cart Count
+        function updateCartCount() {
+            const count = cart.reduce((sum, item) => sum + item.quantity, 0);
+            document.getElementById('cartCount').textContent = count;
+        }
+
+        // Render Cart
+        function renderCart() {
+            const content = document.getElementById('cartContent');
+            
+            if (cart.length === 0) {
+                content.innerHTML = `
+                    <div class="empty-cart">
+                        <h3>Your cart is empty</h3>
+                        <p style="color: var(--earth); margin-bottom: 2rem;">Add some beautiful ceramics to get started</p>
+                        <a href="#" class="cta-button" onclick="showPage('shop')">Shop Now</a>
+                    </div>
+                `;
+                return;
+            }
+
+            const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            const shipping = 12;
+            const total = subtotal + shipping;
+
+            content.innerHTML = `
+                <div class="cart-items">
+                    ${cart.map((item, index) => `
+                        <div class="cart-item">
+                            <div class="cart-item-image">${item.icon}</div>
+                            <div class="cart-item-info">
+                                <h3>${item.name}</h3>
+                                <p style="color: var(--earth);">$${item.price} each</p>
+                            </div>
+                            <div class="cart-item-quantity">
+                                <button onclick="updateCartQuantity(${index}, -1)">−</button>
+                                <span>${item.quantity}</span>
+                                <button onclick="updateCartQuantity(${index}, 1)">+</button>
+                            </div>
+                            <div class="cart-item-price">$${(item.price * item.quantity).toFixed(2)}</div>
+                        </div>
+                    `).join('')}
+                </div>
+                <div class="cart-summary">
+                    <div class="summary-row">
+                        <span>Subtotal</span>
+                        <span>$${subtotal.toFixed(2)}</span>
+                    </div>
+                    <div class="summary-row">
+                        <span>Shipping</span>
+                        <span>$${shipping.toFixed(2)}</span>
+                    </div>
+                    <div class="summary-total">
+                        <span>Total</span>
+                        <span>$${total.toFixed(2)}</span>
+                    </div>
+                    <button class="checkout-button" onclick="proceedToCheckout()">
+                        Proceed to Checkout
+                    </button>
+                </div>
+            `;
+        }
+
+        // Update Cart Quantity
+        function updateCartQuantity(index, change) {
+            cart[index].quantity += change;
+            
+            if (cart[index].quantity <= 0) {
+                cart.splice(index, 1);
+            }
+            
+            saveCart();
+            renderCart();
+        }
+
+        // Proceed to Checkout
+        function proceedToCheckout() {
+            if (cart.length === 0) return;
+            renderCheckoutSummary();
+            showPage('checkout');
+        }
+
+        // Render Checkout Summary
+        function renderCheckoutSummary() {
+            const content = document.getElementById('checkoutSummary');
+            const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            const shipping = 12;
+            const total = subtotal + shipping;
+
+            content.innerHTML = `
+                ${cart.map(item => `
+                    <div class="order-item">
+                        <div>
+                            <strong>${item.name}</strong><br>
+                            <span style="color: var(--earth);">Qty: ${item.quantity}</span>
+                        </div>
+                        <span>$${(item.price * item.quantity).toFixed(2)}</span>
+                    </div>
+                `).join('')}
+                <div class="summary-row" style="margin-top: 1.5rem;">
+                    <span>Subtotal</span>
+                    <span>$${subtotal.toFixed(2)}</span>
+                </div>
+                <div class="summary-row">
+                    <span>Shipping</span>
+                    <span>$${shipping.toFixed(2)}</span>
+                </div>
+                <div class="summary-total" style="margin-top: 1rem;">
+                    <span>Total</span>
+                    <span>$${total.toFixed(2)}</span>
+                </div>
+            `;
+        }
+
+        // Place Order
+        function placeOrder() {
+            const form = document.getElementById('checkoutForm');
+            
+            if (!form.checkValidity()) {
+                form.reportValidity();
+                return;
+            }
+
+            // Generate order number
+            const orderNumber = 'EMB-' + Math.random().toString(36).substr(2, 9).toUpperCase();
+            document.getElementById('orderNumber').textContent = orderNumber;
+
+            // Clear cart
+            cart = [];
+            saveCart();
+
+            // Show confirmation
+            showPage('confirmation');
+        }
+
+        // Show Page
+        function showPage(pageName) {
+            document.querySelectorAll('.page').forEach(page => {
+                page.classList.remove('active');
+            });
+            document.getElementById(pageName).classList.add('active');
+
+            // Render cart when showing cart page
+            if (pageName === 'cart') {
+                renderCart();
+            }
+
+            // Scroll to top
+            window.scrollTo(0, 0);
+        }
+
+        // Show Toast
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.classList.add('show');
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        // Initialize on load
+        init();
+    </script>
+</body>
+</html>
